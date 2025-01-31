@@ -8,8 +8,8 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    type: String,
-    default: "https://unsplash.com/photos/a-bed-sitting-in-a-bedroom-next-to-a-doorway-S5-6KnLQw30",
+    filename: String,
+    url: String,
   },
   price: String,
   location: String,
