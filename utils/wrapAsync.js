@@ -1,20 +1,7 @@
-/*
-
-function wrapAsync(fn) {
-  return function (req, res, next) {
-    Promise.resolve(fn(req, res, next)).catch(next); 
+const wrapAsync = (fn) => {
+  return (req, res, next) => { // Add next parameter
+      fn(req, res, next).catch(err => next(err)); // Use next(err)
   };
-}
-
-module.exports = wrapAsync;
-*/
-
-function wrapAsync(fn) {
-  return function (req, res, next) {
-    fn(req, res, next).catch((err) => {
-      next(err);  // Ensure error is passed to the next middleware
-    });
-  };
-}
+};
 
 module.exports = wrapAsync;
