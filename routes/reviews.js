@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
 const { reviewSchema } = require("../schema.js");
@@ -23,6 +23,8 @@ router.post(
   validateReview,
   wrapAsync(async (req, res, next) => {
     // next is here
+    console.log("params:", req.params);
+    console.log("review", req.body.review);
     let listing = await Listing.findById(req.params.id); // No try...catch needed
     if (!listing) {
       throw new ExpressError(404, "Listing not found"); // Throw ExpressError
