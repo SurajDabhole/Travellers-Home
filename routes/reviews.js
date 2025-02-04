@@ -33,6 +33,7 @@ router.post(
     listing.reviews.push(newReview);
     await newReview.save();
     await listing.save();
+    req.flash("success", "New Review Created!");
     res.redirect(`/listings/${listing._id}`);
   })
 );
@@ -54,6 +55,7 @@ router.delete(
       if (!review) {
         throw new ExpressError(404, "Review not found");
       }
+      req.flash("success", "Review Deleted!");
       res.redirect(`/listings/${id}`);
     } catch (err) {
       if (err.name === "CastError") {
