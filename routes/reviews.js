@@ -2,24 +2,14 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { reviewSchema } = require("../schema.js");
 const Listing = require("../models/listing.js");
 const Review = require("../models/review.js");
-
-// server side validation for review schema
-const validateReview = (req, res, next) => {
-  let { error } = reviewSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(400, msg); // Pass the error to the Express error handler
-  } else {
-    next();
-  }
-};
+const { validateReview, isLoggedIn,isReviewAuthor } = require("../middleware.js");
 
 // Reviews -> POST Route
 router.post(
   "/",
+  isLoggedIn,
   validateReview,
   wrapAsync(async (req, res, next) => {
     // next is here
@@ -30,6 +20,7 @@ router.post(
       throw new ExpressError(404, "Listing not found"); // Throw ExpressError
     }
     let newReview = new Review(req.body.review);
+    newReview.author = req.user._id;
     listing.reviews.push(newReview);
     await newReview.save();
     await listing.save();
@@ -41,6 +32,8 @@ router.post(
 // Reviews -> Delete Route
 router.delete(
   "/:reviewId",
+  isLoggedIn,
+  isReviewAuthor,
   wrapAsync(async (req, res, next) => {
     let { id, reviewId } = req.params;
 
