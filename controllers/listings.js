@@ -23,9 +23,14 @@ module.exports.showListing = async (req, res) => {
 };
 
 module.exports.createListing = async (req, res) => {
-  // let{title,description,image,price,country,location} = req.body; // we cannot use this syntax because we have stored parameters in a listing object
-  const newListing = new Listing(req.body.listing); // we have add the middleware to parse the data for post request : app.use(express.urlencoded({ extended: true }));
+  let url = req.file.path;
+  let filename = req.file.filename;
+  /* let{title,description,image,price,country,location} = req.body; // we cannot use this syntax because we have stored parameters in a listing object */
+  const newListing = new Listing(
+    req.body.listing
+  ); /* we have add the middleware to parse the data for post request : app.use(express.urlencoded({ extended: true }));*/
   newListing.owner = req.user._id;
+  newListing.image = { filename, url };
   await newListing.save(); // DB operation
   req.flash("success", "New Listing Created!");
   res.redirect("/listings");
